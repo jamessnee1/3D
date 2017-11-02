@@ -10,9 +10,14 @@ void display();
 void specialKeys();
 void computePos(float deltaMove);
 
+
 //Globals
 double rotate_y = 0.0;
 double rotate_x = 0.0;
+
+//Camera
+float zoom, rotX, rotY, tx, ty;
+float cameraX = 0.0f, cameraY = 0.0f, cameraZ = 0.0f;
 
 //Angle of camera direction
 float angle = 0.0f;
@@ -24,6 +29,8 @@ float x = 0.0f, z = 5.0f;
 float deltaAngle = 0.0f;
 float deltaMove = 0;
 int xOrigin = -1;
+
+char* windowName = "James 3D Test";
 
 //Display callback function
 void display(){
@@ -41,6 +48,11 @@ void display(){
 	//rotate when user changes rotate_x and rotate_y
 	glRotatef(rotate_x, 1.0, 0.0, 0.0);
 	glRotatef(rotate_y, 0.0, 1.0, 0.0);
+	
+
+	//glTranslatef(rotate_x, rotate_y, 0.0f);
+
+	//glutSolidTeapot(0.5);
 
 	//Multicoloured side - Front
 	glBegin(GL_POLYGON);
@@ -94,6 +106,7 @@ void display(){
 	glVertex3f(-0.5, -0.5, -0.5);
 	glEnd();
 
+	
 	glFlush();
 	glutSwapBuffers();
 
@@ -108,23 +121,27 @@ void computePos(float deltaMove){
 
 }
 
+//Special key escape function
+void processNormalKeys(unsigned char key, int x, int y){
+	if(key == 27){
+		exit(0);
+	}
+}
+
 //Special keys callback function
 void specialKeys(int key, int x, int y){
 
 	if(key == GLUT_KEY_RIGHT){
-		rotate_y += 1.5;	
+		rotate_y += 5;	
 	}
 	else if (key == GLUT_KEY_LEFT){
-		rotate_y -= 1.5;
+		rotate_y -= 5;
 	}
 	else if(key == GLUT_KEY_UP){
-		rotate_x += 1.5;
+		rotate_x += 5;
 	}
 	else if(key == GLUT_KEY_DOWN){
-		rotate_x -= 1.5;
-	}
-	else if(key == 27){
-		exit(0);
+		rotate_x -= 5;
 	}
 
 	//Update display
@@ -135,24 +152,20 @@ void specialKeys(int key, int x, int y){
 //Mouse button function
 void mouseButton(int button, int state, int x, int y){
 	if(button == GLUT_LEFT_BUTTON){
-		if(state == GLUT_UP){
-			angle += deltaAngle;
-			xOrigin = -1;
-		}
-		else {
-			xOrigin = x;
-		}
+		printf("Left mouse button clicked.\n");
+		
 	}
+	
 }
 
 //Mouse move function
 void mouseMove(int x, int y){
-	if(xOrigin >= 0){
-		deltaAngle = (x - xOrigin) * 0.001f;
+	rotate_x = x;
+	rotate_y = y;
 
-		lx = sin(angle + deltaAngle);
-		lz = -cos(angle + deltaAngle);
-	}
+	printf("rotX: %i, rotY: %i\n", x,y);
+
+	glutPostRedisplay();
 }
 
 
@@ -162,10 +175,11 @@ int main(int argc, char *argv[]){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(800, 600);
-	glutCreateWindow("James Window Test");
+	glutCreateWindow(windowName);
 	glEnable(GL_DEPTH_TEST);
 	//Register callbacks
 	glutDisplayFunc(display);
+	glutKeyboardFunc(processNormalKeys);
 	glutSpecialFunc(specialKeys);
 	glutIdleFunc(display);
 
