@@ -15,6 +15,11 @@ void computePos(float deltaMove);
 double rotate_y = 0.0;
 double rotate_x = 0.0;
 
+//flat or textured, wireframe or filled
+int flat = 0;
+int filled = 0;
+int lines = 0;
+
 //Camera
 float zoom, rotX, rotY, tx, ty;
 float cameraX = 0.0f, cameraY = 0.0f, cameraZ = 0.0f;
@@ -32,27 +37,8 @@ int xOrigin = -1;
 
 char* windowName = "James 3D Test";
 
-//Display callback function
-void display(){
-
-	if(deltaMove){
-		computePos(deltaMove);	
-	}
-
-	//Clear buffer
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	//Reset transformations
-	glLoadIdentity();
-
-	//rotate when user changes rotate_x and rotate_y
-	glRotatef(rotate_x, 1.0, 0.0, 0.0);
-	glRotatef(rotate_y, 0.0, 1.0, 0.0);
-	
-
-	//glTranslatef(rotate_x, rotate_y, 0.0f);
-
-	//glutSolidTeapot(0.5);
+//Draw cube function
+void drawCube(){
 
 	//Multicoloured side - Front
 	glBegin(GL_POLYGON);
@@ -106,10 +92,73 @@ void display(){
 	glVertex3f(-0.5, -0.5, -0.5);
 	glEnd();
 
+
+
+}
+
+void drawTeapot(){
+	//enable lighting
+	//glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHT0);
+	//glEnable(GL_LIGHT1);
+	//glEnable(GL_NORMALIZE);
+
+	//setup
+	//glColor3f(1,1,1);
+	//glTranslatef(0,0,-1.0);
+	//glRotatef(cameraX, 0, 1, 0);
+	//glRotatef(cameraY, 1, 0, 0);
+
+	if(flat == 1){
+		glShadeModel(GL_FLAT);
+	}
+	else {
+		glShadeModel(GL_SMOOTH);
+	}
 	
+	if(filled == 0){
+		glutWireTeapot(0.5);
+	}
+	else {
+		glutSolidTeapot(0.5);
+	}
+
+	if(lines == 1){
+		//glDisable(GL_LIGHTING);
+		//glDisable(GL_LIGHT0);
+		//glDisable(GL_LIGHT1);
+		//glDisable(GL_NORMALIZE);
+		//drawLines();
+	}
+
+	glutPostRedisplay();
+
+}
+
+//Display callback function
+void display(){
+
+	if(deltaMove){
+		computePos(deltaMove);	
+	}
+
+	//Clear buffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Reset transformations
+	glLoadIdentity();
+
+	//rotate when user changes rotate_x and rotate_y
+	glRotatef(rotate_x, 1.0, 0.0, 0.0);
+	glRotatef(rotate_y, 0.0, 1.0, 0.0);
+
+	//Draw stuff here
+	drawTeapot();
+	//drawCube();
+
+	//Clean up
 	glFlush();
 	glutSwapBuffers();
-
 
 }
 
@@ -123,8 +172,29 @@ void computePos(float deltaMove){
 
 //Special key escape function
 void processNormalKeys(unsigned char key, int x, int y){
+	
 	if(key == 27){
 		exit(0);
+	}
+	else if(key == 'p'){
+		if(filled == 0){
+			filled = 1;
+			printf("Fill turned on.\n");		
+		}
+		else {
+			filled = 0;
+			printf("Fill turned off.\n");	
+		}
+	}
+	else if(key == 'm'){
+		if(flat == 0){
+			flat = 1;
+			printf("Flat turned on.\n");
+		}
+		else {
+			flat = 0;
+			printf("Flat turned off.\n");		
+		}
 	}
 }
 
@@ -183,7 +253,7 @@ int main(int argc, char *argv[]){
 	glutSpecialFunc(specialKeys);
 	glutIdleFunc(display);
 
-	glutIgnoreKeyRepeat(1);
+	//glutIgnoreKeyRepeat(1);
 	//mouse functions
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
