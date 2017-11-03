@@ -41,52 +41,47 @@ char* windowName = "James 3D Test";
 //Draw cube function
 void drawCube(){
 
-	//Multicoloured side - Front
+	//Front
 	glBegin(GL_POLYGON);
-	glColor3f(1.0, 0.0, 0.0);	glVertex3f(0.5, -0.5, -0.5);
-	glColor3f(0.0, 1.0, 0.0);	glVertex3f(0.5, 0.5, -0.5);
-	glColor3f(0.0, 0.0, 1.0);	glVertex3f(-0.5, 0.5, -0.5);
-	glColor3f(1.0, 0.0, 1.0);	glVertex3f(-0.5, -0.5, -0.5);
+	glVertex3f(0.5, -0.5, -0.5);
+	glVertex3f(0.5, 0.5, -0.5);
+	glVertex3f(-0.5, 0.5, -0.5);
+	glVertex3f(-0.5, -0.5, -0.5);
 
-	//white side - back
+	//back
 	glBegin(GL_POLYGON);
-	glColor3f(1.0, 1.0, 1.0);
 	glVertex3f(0.5, -0.5, 0.5);
 	glVertex3f(0.5, 0.5, 0.5);
 	glVertex3f(-0.5, 0.5, 0.5);
 	glVertex3f(-0.5, -0.5, 0.5);
 	glEnd();
 
-	//purple side - right
+	//right
 	glBegin(GL_POLYGON);
-	glColor3f(1.0, 0.0, 1.0);
 	glVertex3f(0.5, -0.5, -0.5);
 	glVertex3f(0.5, 0.5, -0.5);
 	glVertex3f(0.5, 0.5, 0.5);
 	glVertex3f(0.5, -0.5, 0.5);
 	glEnd();
 
-	//green side - left
+	//left
 	glBegin(GL_POLYGON);
-	glColor3f(0.0, 1.0, 0.0);
 	glVertex3f(-0.5, -0.5, 0.5);
 	glVertex3f(-0.5, 0.5, 0.5);
 	glVertex3f(-0.5, 0.5, -0.5);
 	glVertex3f(-0.5, -0.5, -0.5);
 	glEnd();
 
-	//blue side - top
+	//top
 	glBegin(GL_POLYGON);
-	glColor3f(0.0, 0.0, 1.0);
 	glVertex3f(0.5, 0.5, 0.5);
 	glVertex3f(0.5, 0.5, -0.5);
 	glVertex3f(-0.5, 0.5, -0.5);
 	glVertex3f(-0.5, 0.5, 0.5);
 	glEnd();
 
-	//red side - bottom
+	//bottom
 	glBegin(GL_POLYGON);
-	glColor3f(1.0, 0.0, 0.0);
 	glVertex3f(0.5, -0.5, -0.5);
 	glVertex3f(0.5, -0.5, 0.5);
 	glVertex3f(-0.5, -0.5, 0.5);
@@ -99,6 +94,13 @@ void drawCube(){
 	}
 	else {
 		glShadeModel(GL_SMOOTH);
+	}
+
+	if(filled == 0){
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	if(light == 1){
