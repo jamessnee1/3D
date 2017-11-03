@@ -3,7 +3,11 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include <string.h>
 #include <math.h>
+
+#define GLUT_WHEEL_UP 3
+#define GLUT_WHEEL_DOWN 4
 
 //Prototypes
 void display();
@@ -37,6 +41,97 @@ float deltaMove = 0;
 int xOrigin = -1;
 
 char* windowName = "James 3D Test";
+
+GLuint model;
+char ch = '1';
+
+//load model
+void loadModel(char * filename){
+	
+	FILE *fp;
+	int read;
+	GLfloat x, y, z;
+	char ch;
+	model = glGenLists(1);
+	fp = fopen(filename, "r");
+	
+	if(fp == NULL){
+		printf("Error: Cannot open model file! Exiting...\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	glPointSize(2.0);
+	
+	glNewList(model, GL_COMPILE);
+
+	{
+		glPushMatrix();
+		glBegin(GL_POINTS);
+		
+		while(!feof(fp)){
+			read = fscanf(fp, "%c %f %f %f", &ch, &x, &y, &z);
+			if(read == 4 && ch == 'v'){
+				glVertex3f(x, y, z);
+			}
+			
+
+		}
+
+		glEnd();
+	}
+
+	glPopMatrix();
+	glEndList();
+	fclose(fp);
+	
+
+}
+
+//Draw model function
+void drawModel(){
+	
+	glPushMatrix();
+	glCallList(model);
+	glTranslatef(0.0f, -40.0f, -150.0f);
+	glScalef(0.1f, 0.1f, 0.1f);
+	glPopMatrix();
+
+	if(flat == 1){
+		glShadeModel(GL_FLAT);
+	}
+	else {
+		glShadeModel(GL_SMOOTH);
+	}
+
+	if(filled == 0){
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	
+	}
+	else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	if(light == 1){
+		//enable lighting
+		glClearDepth(1);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		//set position of light
+		GLfloat lightpos[] = {0.5, 1.0, 1.0, 0.0};
+		glLightfv(GL_LIGHT0, GL_POSITION, lightpos); 
+	}
+	else {
+		//disable lighting
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHT0);
+		//drawLines();
+		
+	}
+
+	glutPostRedisplay();
+}
+
 
 //Draw cube function
 void drawCube(){
@@ -190,12 +285,13 @@ void display(){
 	glRotatef(rotate_y, 0.0, 1.0, 0.0);
 
 	//Draw stuff here
-	if(cube == 0){
-		drawTeapot();
-	}
-	else {
-		drawCube();
-	}
+	//if(cube == 0){
+	//	drawTeapot();
+	//}
+	//else {
+	//	drawCube();
+	//}
+	drawModel();
 	
 
 	//Clean up
@@ -275,6 +371,7 @@ void specialKeys(int key, int x, int y){
 	else if(key == GLUT_KEY_DOWN){
 		rotate_x -= 5;
 	}
+	
 
 	//Update display
 	glutPostRedisplay();
@@ -286,6 +383,12 @@ void mouseButton(int button, int state, int x, int y){
 	if(button == GLUT_LEFT_BUTTON){
 		printf("Left mouse button clicked.\n");
 		
+	}
+	else if(button == GLUT_WHEEL_UP){
+		printf("Mouse wheel up\n");	
+	}
+	else if(button == GLUT_WHEEL_DOWN){
+		printf("Mouse wheel down\n");
 	}
 	
 }
@@ -315,12 +418,18 @@ int main(int argc, char *argv[]){
 	glutSpecialFunc(specialKeys);
 	glutIdleFunc(display);
 
+	glMatrixMode(GL_MODELVIEW);
+
 	//This function is if we want to stop movement when key held down
 	//glutIgnoreKeyRepeat(1);
 
 	//mouse functions
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
+	
+	//Load model
+	loadModel("/home/james/Desktop/3D/model.obj");
+
 	//Enter GLUT event processing cycle
 	glutMainLoop();
 
