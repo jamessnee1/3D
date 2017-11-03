@@ -18,7 +18,7 @@ double rotate_x = 0.0;
 //flat or textured, wireframe or filled
 int flat = 0;
 int filled = 0;
-int lines = 0;
+int light = 0;
 
 //Camera
 float zoom, rotX, rotY, tx, ty;
@@ -97,14 +97,8 @@ void drawCube(){
 }
 
 void drawTeapot(){
-	//enable lighting
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
-	//glEnable(GL_LIGHT1);
-	//glEnable(GL_NORMALIZE);
 
 	//setup
-	//glColor3f(1,1,1);
 	//glTranslatef(0,0,-1.0);
 	//glRotatef(cameraX, 0, 1, 0);
 	//glRotatef(cameraY, 1, 0, 0);
@@ -123,13 +117,26 @@ void drawTeapot(){
 		glutSolidTeapot(0.5);
 	}
 
-	if(lines == 1){
-		//glDisable(GL_LIGHTING);
-		//glDisable(GL_LIGHT0);
-		//glDisable(GL_LIGHT1);
-		//glDisable(GL_NORMALIZE);
-		//drawLines();
+	if(light == 1){
+		//enable lighting
+		glClearDepth(1);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		//set position of light
+		GLfloat lightpos[] = {0.5, 1.0, 1.0, 0.0};
+		glLightfv(GL_LIGHT0, GL_POSITION, lightpos); 
 	}
+	else {
+		//disable lighting
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHT0);
+		//drawLines();
+		
+	}
+
+
 
 	glutPostRedisplay();
 
@@ -174,7 +181,7 @@ void computePos(float deltaMove){
 void processNormalKeys(unsigned char key, int x, int y){
 	
 	if(key == 27){
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	else if(key == 'p'){
 		if(filled == 0){
@@ -194,6 +201,16 @@ void processNormalKeys(unsigned char key, int x, int y){
 		else {
 			flat = 0;
 			printf("Flat turned off.\n");		
+		}
+	}
+	else if(key == 'l'){
+		if(light == 0){
+			light = 1;
+			printf("Lighting turned on.\n");		
+		}
+		else {
+			light = 0;
+			printf("Lighting turned off.\n");
 		}
 	}
 }
