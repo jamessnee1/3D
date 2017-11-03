@@ -270,7 +270,9 @@ int main(int argc, char *argv[]){
 	glutSpecialFunc(specialKeys);
 	glutIdleFunc(display);
 
+	//This function is if we want to stop movement when key held down
 	//glutIgnoreKeyRepeat(1);
+
 	//mouse functions
 	glutMouseFunc(mouseButton);
 	glutMotionFunc(mouseMove);
