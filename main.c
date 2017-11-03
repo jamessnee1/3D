@@ -36,9 +36,6 @@ float angle = 0.0f;
 float lx = 0.0f, lz = -1.0f;
 
 float x = 0.0f, z = 5.0f;
-float deltaAngle = 0.0f;
-float deltaMove = 0;
-int xOrigin = -1;
 
 char* windowName = "James 3D Test";
 
@@ -270,9 +267,6 @@ void drawTeapot(){
 //Display callback function
 void display(){
 
-	if(deltaMove){
-		computePos(deltaMove);	
-	}
 
 	//Clear buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -283,15 +277,16 @@ void display(){
 	//rotate when user changes rotate_x and rotate_y
 	glRotatef(rotate_x, 1.0, 0.0, 0.0);
 	glRotatef(rotate_y, 0.0, 1.0, 0.0);
+	//glTranslatef(0.0, 0.0, z);
 
 	//Draw stuff here
-	//if(cube == 0){
-	//	drawTeapot();
-	//}
-	//else {
-	//	drawCube();
-	//}
-	drawModel();
+	if(cube == 0){
+		drawTeapot();
+	}
+	else {
+		drawCube();
+	}
+	//drawModel();
 	
 
 	//Clean up
@@ -300,13 +295,6 @@ void display(){
 
 }
 
-//compute position
-void computePos(float deltaMove){
-
-	x += deltaMove * lx * 0.1f;
-	z += deltaMove * lz * 0.1f;
-
-}
 
 //Special key escape function
 void processNormalKeys(unsigned char key, int x, int y){
@@ -385,10 +373,12 @@ void mouseButton(int button, int state, int x, int y){
 		
 	}
 	else if(button == GLUT_WHEEL_UP){
-		printf("Mouse wheel up\n");	
+		printf("Mouse wheel up\n");
+		z -= 1;	
 	}
 	else if(button == GLUT_WHEEL_DOWN){
 		printf("Mouse wheel down\n");
+		z += 1;
 	}
 	
 }
@@ -418,7 +408,7 @@ int main(int argc, char *argv[]){
 	glutSpecialFunc(specialKeys);
 	glutIdleFunc(display);
 
-	glMatrixMode(GL_MODELVIEW);
+	//glMatrixMode(GL_MODELVIEW);
 
 	//This function is if we want to stop movement when key held down
 	//glutIgnoreKeyRepeat(1);
@@ -428,7 +418,7 @@ int main(int argc, char *argv[]){
 	glutMotionFunc(mouseMove);
 	
 	//Load model
-	loadModel("/home/james/Desktop/3D/model.obj");
+	//loadModel("/home/james/Desktop/3D/model.obj");
 
 	//Enter GLUT event processing cycle
 	glutMainLoop();
