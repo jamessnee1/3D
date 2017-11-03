@@ -19,6 +19,7 @@ double rotate_x = 0.0;
 int flat = 0;
 int filled = 0;
 int light = 0;
+int cube = 0;
 
 //Camera
 float zoom, rotX, rotY, tx, ty;
@@ -93,6 +94,33 @@ void drawCube(){
 	glEnd();
 
 
+	if(flat == 1){
+		glShadeModel(GL_FLAT);
+	}
+	else {
+		glShadeModel(GL_SMOOTH);
+	}
+
+	if(light == 1){
+		//enable lighting
+		glClearDepth(1);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		//set position of light
+		GLfloat lightpos[] = {0.5, 1.0, 1.0, 0.0};
+		glLightfv(GL_LIGHT0, GL_POSITION, lightpos); 
+	}
+	else {
+		//disable lighting
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHT0);
+		//drawLines();
+		
+	}
+
+	glutPostRedisplay();
 
 }
 
@@ -160,8 +188,13 @@ void display(){
 	glRotatef(rotate_y, 0.0, 1.0, 0.0);
 
 	//Draw stuff here
-	drawTeapot();
-	//drawCube();
+	if(cube == 0){
+		drawTeapot();
+	}
+	else {
+		drawCube();
+	}
+	
 
 	//Clean up
 	glFlush();
@@ -183,6 +216,16 @@ void processNormalKeys(unsigned char key, int x, int y){
 	if(key == 27){
 		exit(EXIT_SUCCESS);
 	}
+	else if(key == 'c'){
+		if(cube == 0){
+			cube = 1;
+			printf("Cube turned on.\n");
+		}
+		else{
+			cube = 0;
+			printf("Teapot turned on.\n");
+		}
+	}
 	else if(key == 'p'){
 		if(filled == 0){
 			filled = 1;
@@ -196,11 +239,11 @@ void processNormalKeys(unsigned char key, int x, int y){
 	else if(key == 'm'){
 		if(flat == 0){
 			flat = 1;
-			printf("Flat turned on.\n");
+			printf("Smooth turned off.\n");
 		}
 		else {
 			flat = 0;
-			printf("Flat turned off.\n");		
+			printf("Smooth turned on.\n");		
 		}
 	}
 	else if(key == 'l'){
